@@ -655,6 +655,111 @@ While \C{px} has type \C{(P x)}, it is accepted as an
 inhabitant of \C{(P y)} because inside the \C{match} the term \C{y}
 is automatically replaced by \C{x}.
 
+\subsection{A discussion of total functions}
+\label{sec:total}
+We are confronted with a striking difference between the usual
+mathematical approach to functions and the approach used in \Coq{} and
+the \mcbMC{} library.  In the latter context, {\em all functions are total
+  by construction}.  This is a difficulty when we want the language we
+use in the \mcbMC{} library to stick as close to possible to the
+language of usual mathematics, where some functions are {\em not
+  defined everywhere}.
+
+A function from Section~\ref{ssec:recnat} where the difference is
+visible is Function~\C{predn}.  It
+returns the predecessor of natural number, and intuitively, it should
+not be defined when this natural number is \C{O}, which has no
+predecessor.
+
+Usual mathematical practice, learned by
+everybody from middle school, is that we can consider a bigger type of
+numbers, in which the natural numbers are injected implicitly, and
+where the predecessor of \C{0} does exist.
+So the predecessor of 3 is a natural number,
+but the predecessor of \C{0} is not, it is a relative integer.  This
+versatility, allowed by mathematical practice, may seem to provide
+the necessary suppleness to be able to write mathematical formulas
+quickly and meaningfully.  It is not enough.  There are mathematical
+functions that are inherently not defined everywhere, in ways that
+cannot be recovered by just adding a new type.
+
+The example we will choose is the example of multiplicative inverse.
+For natural numbers, only \(1\) has a multiplicative inverse
+\(1^{-1}=1\), so that for every number \(n\), \(n \times 1 \times
+1^{-1} = n\).  In a suitably extended numerical type, such as a type of
+rational numbers, almost any number \(a\) has a multiplicative inverse
+\(a^{-1}\) so that for every other number \(n\) \(n \times a \times
+a^{-1}= n\).  It is only needed that \(a\) is non zero.  But zero
+remains an ``exceptional'' case, whatever extension of the
+type we may propose.
+
+In the case of the inverse of zero, the usual mathematical practice
+takes a different stance.  This formula is just not defined, and
+similarly for any number \(n\), \(n/0\) is not defined.  In this
+sense, usual mathematics prefers to take a risk.  Mathematicians are
+allowed to write formulas using division, but when it comes to
+understanding the meaning of these formulas, it is their
+responsibility to check that they make sense, in other words,
+that they do not contain any division by zero.  Thus a given
+formula is not well defined in all cases, it is well defined in
+a precise context, the one that guarantees that there is
+no division by zero.
+
+In the \Coq{} system, the approach is different: every mathematical
+formula must have a well-defined value.  When facing a partially
+defined function, this means that a neighbour total function is chosen,
+one that coincides with the initial function when it is
+defined and a default value must be provided when the initial
+mathematical function would otherwise be undefined.  With this
+approach, it may be that a formula has a well-defined value in the
+framework of total functions, while it would have no value, and no
+meaning in the usual mathematical practice.
+
+This is a very small departure from usual mathematical practice,
+because a given formula has the right value whenever usual
+mathematical practice makes it well-defined.  Most mathematical
+theorems in the \mcbMC{} library containing formulas with artificially
+total functions will contain premises stating that the formula is well
+defined as per usual mathematical practice.  Still, even though it is
+a small departure from usual mathematics, it may take time to accept.
+
+Taking the example of multiplicative inverse as an illustration, the
+inverse function is defined in the \mcbMC{} library from the level of
+{\em unit ring structures}.  These structures are like ring structures,
+except that a subset of the type is identified, the subset of {\em units},
+and and inverse function, together with the notation \C{^-1}, so that
+the property that \C{x^-1} is a multiplicative inverse of \C{x} for every
+\C{x} that is a unit.  Moreover, this mathematical structure also provides
+the notation \C{x / y} as an abbreviation for \C{x * y^-1}.
+
+However, the properties of the multiplicative inverse
+are only provided for the elements that have a multiplicative
+inverse (these elements are called units).  When showing that a given
+type satisfies the unit ring structure,
+we need to provide a total function for the multiplicative inverse,
+but we only have to ensure that the multiplicative inverse property is
+satisfied for the unit elements.  The element \C{0} is not
+a unit, so we are entitled to chose any value for \C{0^-1}.  This does
+not endanger the consistency of mathematical formulas, because we
+shall not be able to use the multiplicative inverse property for this
+value.  On the other hand, a few formulas that would otherwise be
+deemed meaningless by usual mathematics do receive a predictible
+value.  For instance, \C{0 / 0 = 0 * 0^-1} has a meaning (the value
+\C{0}), and this
+meaning relies on the additive neutral property of \C{0} rather
+than on the multiplicative inverse property of \C{0^-1}.
+
+This systematic approach about total functions is inherent to many
+logical systems, and especially to logical systems used in
+computer-based proof verification.  It has the advantage that all
+mathematical formulas have a meaning.  Of course, it is necessary to
+place oneself in a specific context to make sure that the meaning of a
+given formula is the same as the intuitive meaning for the reader,
+but this is usually made explicit by theorem
+premises, in ways that are more precise than what is granted by the
+usual mathematical practice, where just reading and accepting a
+mathematical formula implies the acceptance of untold conditions.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{A script language for interactive proving}
 
