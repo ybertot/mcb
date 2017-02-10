@@ -707,7 +707,8 @@ no division by zero.
 
 In the \Coq{} system, the approach is different: every mathematical
 formula must have a well-defined value.  When facing a partially
-defined function, this means that a neighbour total function is chosen,
+defined function, a frequent approach is that a neighbour total
+function is chosen,
 one that coincides with the initial function when it is
 defined and a default value must be provided when the initial
 mathematical function would otherwise be undefined.  With this
@@ -715,13 +716,16 @@ approach, it may be that a formula has a well-defined value in the
 framework of total functions, while it would have no value, and no
 meaning in the usual mathematical practice.
 
-This is a very small departure from usual mathematical practice,
+This is a departure from usual mathematical practice,
 because a given formula has the right value whenever usual
 mathematical practice makes it well-defined.  Most mathematical
-theorems in the \mcbMC{} library containing formulas with artificially
+theorems in the \mcbMC{} library containing formulas with neighbour
 total functions will contain premises stating that the formula is well
-defined as per usual mathematical practice.  Still, even though it is
-a small departure from usual mathematics, it may take time to accept.
+defined as per usual mathematical practice.  It may take time to accept
+such a departure, because mathematical formulas with such neighbour total
+function may make stronger claims than what can be read from usual mathematical
+perspective, when the premises of theorems are insufficient to guarantee
+that formulas can be read just with their meaning in usual mathematics.
 
 Taking the example of multiplicative inverse as an illustration, the
 inverse function is defined in the \mcbMC{} library from the level of
@@ -749,7 +753,7 @@ value.  For instance, \C{0 / 0 = 0 * 0^-1} has a meaning (the value
 meaning relies on the additive neutral property of \C{0} rather
 than on the multiplicative inverse property of \C{0^-1}.
 
-This systematic approach about total functions is inherent to many
+This frequent approach about total functions is common to many
 logical systems, and especially to logical systems used in
 computer-based proof verification.  It has the advantage that all
 mathematical formulas have a meaning.  Of course, it is necessary to
@@ -760,6 +764,15 @@ premises, in ways that are more precise than what is granted by the
 usual mathematical practice, where just reading and accepting a
 mathematical formula implies the acceptance of untold conditions.
 
+Because we are using type theory, in particular with dependent types, we
+have another tool to handle partially defined functions.  Dependent types
+make it possible to assert that a function is applied only when the arguments
+satisfy the right conditions.  A typical example is given by matrix
+multiplication, which is well-defined only for two matrices that have
+a dimension in common.  This constraint can be expressed using dependent
+types, as was shown in Section~\ref{ssec:terms} and will be illustrated further
+in Section~\ref{sec:matrix}.  Functions with dependent type are slightly harder
+to use, so that the approach with neighbour total function is often preferred.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{A script language for interactive proving}
 
