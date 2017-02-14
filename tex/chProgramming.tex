@@ -1048,62 +1048,6 @@ instead of a subterm of "n".
 \end{coqout}
 \coqrun{name=loop_run;fail}{ssr,loop}
 
-% In function \C{add}, the first argument \C{n} is only used to
-% repeat \C{n} times the operation of adding a \C{.+1} on the second
-% argument.  This corresponds to the fact that the \C{p} is only used in
-% the recursive call.  The programming language makes it possible to do
-% more.  For instance, for a given function \(f\), we might want to add all
-% the values \(f 0 + f 1 + \cdots + f n\).  This would be done in the
-% following manner:
-%
-% \begin{coq}{name=example_sum_f}{}
-% Fixpoint sum_f (f : nat -> nat) (n : nat) :=
-%   if n is p.+1 then add (f n) (sum_f p) else f 0.
-% \end{coq}
-%
-If addition amounts to repeating the operation of applying \C{.+1}
-to one of the arguments, subtraction amounts to repeating the
-operation of fetching a subterm of the first argument.  This is also
-easily expressed using pattern matching constructs.  Here again,
-subtraction is already defined in the libraries, but we can play the game
-of re-defining our own version.
-
-\begin{coq}{name=sub}{}
-Fixpoint subn m n : nat :=
-  match m, n with
-  | p.+1, q.+1 => subn p q
-  | _ , _ => m
-  end.
-\end{coq}
-\coqrun{name=sub_run}{ssr,sub}
-\index[coq]{\C{subn}}
-From a mathematical point of view, this definition can be quite
-unsettling.  The second pattern matching rule indicates that when
-any argument of the subtraction is 0, then the result is
-the first argument.  This is exactly what one would expect when the
-second argument is 0; but this rule also covers the case where the
-second argument is non-zero while the first argument is 0: in that
-case, the result of the function is zero.
-
-On paper, the expression \(m - n\), for $m, n \in
-\mathbb{N}$, is usually understood as an integer, which is negative
-when $n > m$. But here the output of \C{subn} is constrained by its
-output type to be a natural number. Moreover, any function defined in
-\Coq{} has to be total, i.e., has to assign a value to any element in
-the type of its arguments.
-
-Since \C{subn} has type \C{nat -> nat -> nat},
-an element \emph{in type} \C{nat} has to be output by the function
-even in the case when the second argument is non-zero and the first
-argument is zero. The default value output in this case is \C{0}, so
-that in the end \C{subn} sends two naturals \(m\) and
-\(n\) to \(\max\left\{m-n, 0\right\}\) as opposed to \(m-n\).
-
-In a sense, subtraction,
-which is a partial function on natural numbers, has been made total by
-providing a default value in the ``exceptional'' cases.  We shall
-discuss this in more detail in Section~\ref{sec:total}.
-
 We can also write a recursive function with two arguments of
 type \C{nat}, that returns \C{true} exactly when the two arguments are
 equal:
@@ -1160,6 +1104,49 @@ Eval compute in 2 == addn 1 0.+1.
 % normalization strategy, after the recursive definition of the \C{eqn}
 % function.
 
+As a third example, we define a function that serves the double purpose
+of computing subtraction and comparing two numbers in the sense 
+{\em larger than or equal}.  The description of this function is reminiscent
+of the equality test function, in the sense that it contains pattern-matching
+on the two inputs, but it returns a natural number, which is what remains in
+the first argument when either the first or the second argument is exhausted.
+In fact, the returned value is 0 when the second argument is larger than or
+equal to the first one.
+
+\begin{coq}{name=sub}{}
+Fixpoint subn m n : nat :=
+  match m, n with
+  | p.+1, q.+1 => subn p q
+  | _ , _ => m
+  end.
+\end{coq}
+\coqrun{name=sub_run}{ssr,sub}
+\index[coq]{\C{subn}}
+
+The \mcbMC{} library contains a similar definition, together with a notation
+definition so that \C{sub n m} is written \C{n - m}.  This is sensible because
+the result
+of \C{subn} is the subtraction whenever the minuend (i.e. \C{n}) is
+larger than the subtrahend (i.e. \C{m}).  The library also contains
+a definition of comparison based on \C{subn}.
+\begin{coq}{name=leq}{}
+Definition leq m n := m - n == 0.
+
+Notation "m <= n" := (leq m n) : nat_scope.
+Notation "m < n" := (m.+1 ≤ n) : nat_scope.
+\end{coq}
+
+A fourth example of recursive function is a function that tests
+whether its argument is odd.
+
+\begin{coq}{name=odd}{}
+Fixpoint odd n := if n is p.+2 then odd p else (n == 1).
+\end{coq}
+This definition is interesting because it illustrates the fact
+that the argument to the recursive call can be another integer than
+the predecessor of the initial argument.  Here, the initial argument
+is \C{n} and the argument to recursive call is \C{p}, the predecessor of the
+predecessor of \C{n} when it exists.
 
 In this section, we introduced a variety of functions and notations
 for operations on natural numbers.  In practice, these functions and
@@ -1179,19 +1166,6 @@ type.  Postfix notations such as \C{.-1} and \C{.*2} are provided for
 the predecessor and double functions.
 \index[coq]{\C{(_ .-1)}}
 \index[coq]{\C{(_ .*2)}}
-
-We detail here the definition of \C{leq} since it will be often used
-in examples.
-
-\begin{coq}{name=leq}{}
-Definition leq m n := m - n == 0.
-Notation "m <= n" := (leq m n).
-\end{coq}
-\coqrun{name=leq_run}{ssr,leq}
-
-Note that this definition crucially relies on the fact that
-subtraction computes to \C{0} whenever the first argument is less than
-or equal to the second argument.
 
 The \mcbMC{} library also provides concepts that make sense only
 for the \C{nat} data type, like the
