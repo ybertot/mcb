@@ -1801,7 +1801,9 @@ When an inductive type has a single constructor, like in the case of
 \C{pair} or for records, the name of this constructor is not relevant
 in pattern matching, as the ``case analysis'' has a single, irrefutable,
 branch. There is a specific syntax for irrefutable patterns, letting
-one rewrite the definition above as follows:
+one rewrite the definition above as follows:\marginpar{if the name of the
+constructor is not relevant, why do we have to write it down?  I
+would rather remove this remark about a name that is not relevant.}
 
 \begin{coq}{name=x2}{}
 Definition x (p : point) := let: Point a _ _ := p in a.
@@ -2142,7 +2144,7 @@ $$
 $$
 and, more generally, in order to make explicit the meaning of the capital
 notations like $\bigcap_{i=1}^nA_i,
-\prod_{i=1}^nu_i, \dots$, we need to decribe an iteration procedure
+\prod_{i=1}^nu_i, \dots$, we need to describe an iteration procedure
 akin to the \C{foldr} program. We illustrate this on the example of
 the summation symbol (for a finite sum):
 
@@ -2202,7 +2204,7 @@ Eval compute in \sum_( 1 <= i < 5 ) i.
 \end{coqout-right}{}{}
 \coqrun{name=evalsum_run}{ssr,iotasum,evalsum}
 
-Behind the scenes, iteration happens following the order of the list,
+Behind the scene, iteration happens following the order of the list,
 as we observed in section~\ref{sec:symcomp}.
 In the present case the operation we iterate, addition, is
 commutative, so this order does not impact the final result. But it
@@ -2214,7 +2216,7 @@ program \C{foldr}, which manipulates functions, is not only useful for
 providing notations, but it also facilitates the design of the
 corpus of properties of these expressions. This corpus comprises
 lemmas derived from the generic properties of \C{foldr}, which do not
-depend on the function iterated. By assuming further properties
+depend on the iterated function. By assuming further properties
 linking the iterated operation to the initial value, like forming a
 monoid, we will be able to provide a generic theory of iterated
 operations in section~\ref{sec:bigop}.
@@ -2267,7 +2269,7 @@ Notation "m <= n" := (leq m n) (at level 70, no associativity).
 where the rightmost annotations, between parentheses, indicate a
 precedence level and an associativity rule so as to avoid parsing
 ambiguities. A lower level binds more than a higher level. A comprehensive
-description of the \C{Notation} command goes behind the scope of this
+description of the \C{Notation} command goes beyond the scope of this
 book; the interested reader shall refer to~\cite[chapter 12]{Coq:manual}.
 
 A notation can denote an arbitrary expression, not just a
