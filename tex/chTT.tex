@@ -54,20 +54,22 @@ set theory, the rules which govern the construction of
 grammatically correct statements are rather loose, and the goal of the
 game is to construct a proof for a given proposition, using
 first-order logic to combine the axioms of the theory.
-The analogue of the meta-statement that a given
+The type-theoretic analogue of the set-theoretic
+meta-statement that a given
 proposition has a proof is the meta-statement that a given term has a
 given type. Such a meta-statement is called a \emph{typing
   judgment}. It is written:
 $$\Gamma \vdash t : T$$
 which means:
 \emph{in the context $\Gamma$, the term $t$ has the type $T$}.
-Typing judgments are justified from typing rules, and these
+Typing judgments are justified by typing rules, and these
 justifications form trees similar to the proof trees of natural deduction.
 Before getting more precise about what contexts, terms and types are,
 let us emphasize a couple of important differences with set theory
 here: first, the typing judgment features explicit expressions for
 the term and the type, whereas the proof of a statement in first-order
-logic is seldom mentioned. Second, the term $t$ shall represent an
+logic is seldom mentioned. Second, the term $t$ in a typing
+judgment shall represent an
 arbitrary object of the mathematical discourse, like a number or a
 group, and not only a proof.
 
@@ -81,7 +83,6 @@ has a type in the context in which it occurs.
 
 We put aside inductive types until section~\ref{ssec:indtypes}, and define
 inductively what the terms of the formalism are. We suppose that we
-
 have a countable infinite set of symbols available for names, so that it is
 always possible to exhibit a name distinct from a given arbitrary
 finite collection of names. The simplest, atomic, terms are the
@@ -102,9 +103,7 @@ notation. In the case where \C{x} does occur in term \C{U}, the term
 \C{forall x : T, U} is called a \emph{dependent type}.
 \index[concept]{dependent type}
 If \C{x} is a variable and \C{T}, \C{u}
-
 are terms, then \C{(fun x:T => u)} is a term, which represents a function
-
 with argument \C{x} and body \C{u}. If \C{t} and \C{u} are terms then
 \C{(t u)} is also a term, which represents the application of (function)
 \C{t} to (its argument) \C{u}. Finally \C{let x := t in u} is a term
@@ -139,6 +138,9 @@ A \emph{well-formed context} is either an empty context, or the
 extension of an existing context with a pair \C{(x : T)}, where \C{x}
 is a fresh name and \C{T} is a type. As expected, a well-formed
 context provides a type to the variables it contains:
+\marginpar{Here it is unsatisfactory that you already explained what contexts
+are on the previous page, saying that contexts contain typed declarations
+and typed definitions, this type, you don't mention typed definitions???}
 $$\textrm{if } \Gamma \textrm{ is well-formed  and }
 \C{(x : T)} \in \Gamma \textrm{ then }
 \Gamma \vdash \C{x} : \C{T}.$$
@@ -274,7 +276,6 @@ mulmx : forall R : Type, forall m n p : nat,
 
 This time the data type of matrices exposes the size, and matrix multiplication
 can be given a type that rules out incompatible matrices and also describes
-
 the size of the resulting matrix in terms of the size of the input
 ones.\footnote{To be precise, \C{mulmx} also needs to take in input operations to
 add and multiply elements of \C{R}.  Such detail plays no role in the current
@@ -320,7 +321,7 @@ For example,
 We refer the reader
 to the reference manual of \Coq{}~\cite{Coq:manual} for the other
 rules of the system, which are variants of the ones we presented or
-which express subtleties of the type system that are out of the scope of
+which express subtleties of the type system that are out of scope for
 the present book, like the difference between the sorts \C{Prop} and
 \C{Type}.
 
@@ -330,7 +331,9 @@ We conclude this section by explaining a last rule of CIC, called the
 framework. Computation is modeled by rewrite rules explaining how to
 apply functions to their argument. For instance, the so-called
 $\beta$-reduction rule rewrites an application of the form
-$(\C{fun x => t}) u$ into $t[u/x]$: the formal argument
+$(\C{fun x => t}) u$ into $t[u/x]$:
+\marginpar{fonts are not respected here}
+ the formal argument
 $x$ is substituted by the actual argument $u$ in the body $t$ of the
 function. A similar computation rule models the computation of a term of
 the shape \C{(let x := u in t)} into $t[u/x]$. Two terms
@@ -374,7 +377,7 @@ where $A \equiv A'$ denotes that $A$ and $A'$ are convertible.
 
 \subsection{Inductive types}\label{ssec:indtypes}
 
-The formalism described in section~\ref{ssec:terms} is extended by
+The formalism described in section~\ref{ssec:terms} is extended with
 the possibility of introducing
 \emph{inductive definitions}~\cite{CoPa89, Moh93}. We only provide a
 very brief overview of this subtle feature and again refer the reader
@@ -429,6 +432,8 @@ Fixpoint addn n m :=
 \end{coq}
 Note that guarded fixpoints always terminate, as a non-terminating
 term would allow proofs of absurdity (see section~\ref{ssec:indreason}).
+\marginpar{Maybe the description of guardedness could be moved from
+chapter 1 to here}
 
 \subsection{More connectives}
 With inductive definitions it is possible to describe more data
@@ -526,10 +531,8 @@ type \C{A}.  Hence \C{(P x)} is the instance of the predicate, for \C{x}.  E.g.,
 the predicate of being an odd prime number is expressed as
 \C{(fun x : nat => (odd x) && (prime x))}, and the statement expressing the
 existence of such a number is
-
 \C{(ex nat (fun x : nat => (odd x) && (prime x)))}, which (thanks
 to the \C{Notation} mechanism of \Coq{}) is parsed and
-
 printed as the more familiar \C{(exists x : nat, odd x && prime x)}.
 
 It is worth summing up the many features of type theory that
@@ -542,7 +545,7 @@ ex_intro : forall A : Type, forall P : A -> Prop, forall a : A, P a -> ex A P.
 
 Both \C{ex} and \C{ex_intro} are parameterized by \C{(A : Type)}: as
 we have seen in chapter~\ref{ch:prog}, the \C{(forall A : Type)}
-quantification indicates that \C{ex} are \C{ex_intro} \C{polymorphic}
+quantification indicates that \C{ex} and \C{ex_intro} are \C{polymorphic}
 constants, that can be instantiated for any type. Both \C{ex} and
 \C{ex_intro} also have a parameter of type  \C{(A -> Prop)}: since it
 does not appear in the rest of the type of \C{ex}, this parameter is
@@ -613,8 +616,8 @@ left it as the last one is that it has a tricky nature.  In particular,
 equality, as we have seen in the previous chapters, is an open notion
 in the following sense.  Terms that compute to the same syntactic expression
 are considered as equal, and this is true for any program the user may write.
-Hence such notion of equality needs to be somewhat primitive, as
-\C{match} and \C{fun} are.  One also expects such notion to come
+Hence such a notion of equality needs to be somewhat primitive, as
+\C{match} and \C{fun} are.  One also expects such a notion to come
 with a substitutivity property: replacing equals by equals must be licit.
 
 The way this internal notion is exposed is via the concept of index
@@ -630,7 +633,8 @@ Notation "x = y" := (@eq _ x y).
 This is the first time we see a function type after the \C{:} symbol
 in an inductive type declaration.
 The \C{eq} type constructor takes three arguments: a type \C{A} and
-two terms of that type (the former is named \C{x}).
+two terms of that type (the former is named \C{x} in the
+inductive definition).
 Hence one can write \C{(a = b)} whenever \C{a} and \C{b}
 have the same type.
 The \C{erefl} constructor takes no arguments, as \C{I}, but its type
@@ -648,11 +652,11 @@ Definition eq_ind A (P : A -> Prop) x (px : P x) y (e : x = y) : P y :=
 \end{coq}
 
 The notion of equality is one of the most intricate aspects of type
-theory; an in-depth study of it is out of the scope of this book.  The interested reader
+theory; an in-depth study of it is out of scope for this book.  The interested reader
 finds an extensive study of this subject in~\cite{hottbook}.  Later in this
 chapter we define and use other inductive types to take advantage
 of the ``automatic'' substitution of the implicit equations we see here:
-While \C{px} has type \C{(P x)}, it is accepted as an
+While \C{px} has type \C{(P x)}, the function \C{eq_ind} casts it as an
 inhabitant of \C{(P y)} because inside the \C{match} the term \C{y}
 is automatically replaced by \C{x}.
 
@@ -707,7 +711,7 @@ $\forall_I$ logical rule do is to introduce into the proof context a
 new entry.  So far we either expressed this step at the beginning of proofs
 by placing such items just after the name of the lemma being proved, or
 just after a \C{case:} or \C{elim:} proof command.  The current section
-expands on this subject covering the full management of the proof context.
+expands on this subject, covering the full management of the proof context.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Goals as stacks}\label{ssec:stack}
@@ -728,7 +732,7 @@ that may be twofold: a case analysis in the middle of a proof may start two
 distinct lines of reasoning, and hence it is worth being noted explicitly with
 the \C{case} word. Conversly, breaking a pair into two pieces is
 usually not a significant, meaningful step in a proof: hence the
-possiblity to use a lightwight and compact syntax for this bookkeeping
+possiblity to use a lightweight and compact syntax for this bookkeeping
 action, instead of an explicit mention of the \C{case} tactic.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -824,7 +828,7 @@ move=> [x y] /= /prime_gt1-x_gt1 odd_y.
 The leading \C{/} makes \C{prime\_gt1} work as a function instead of
 as a name to be assigned to the top of the stack.  The \C{-} has no effect but
 to visually link the function with the name \C{x_gt1} assigned to its output.
-Indeed \C{-} can be omitted.
+Actually \C{-} can be omitted.
 
 One could also examine \C{y}: it can't be \C{0}, since it would contradict
 the assumption saying that \C{y} is \C{odd}.
@@ -895,7 +899,7 @@ reading a trivial proof?  Of course,
 finding the right balance only comes with experience.
 
 \gotcha{The case intro pattern \C{[..|..]} obeys an exception: when it is the first
-item of an intro pattern, it does not perform a case analysis, but only branch
+item of an intro pattern, it does not perform a case analysis, but only branches
 on the subgoals.
 %\footnote{not the status quo, but I prefer this exception to the current one}
 Indeed in \C{case: n => [|m]} only one case analysis is performed.}
@@ -979,8 +983,8 @@ the top stack item (say, \C{top}), by writing \C{/v}, we are
 forming the term \C{(v top)}, whereas
 when we specialize the top stack item \C{top} to an object \C{x},
 by writing \C{/(_ x)}, we are forming the term \C{(top x)}.  The \C{_}
-is a placeholder for the top item, and is
-omitted in \C{/(v _)}.
+is a placeholder for the top item, and
+omitting it in \C{/(v _)} leads to \C{/v}.
 % [DG] Better "omitted in \C{/v}"?
 % assia: TODO
 
@@ -1011,7 +1015,7 @@ as in the \C{rewrite} tactic, with the top assumption.
 We have seen how to pull items from the stack to the context.
 Now let's see the so called \emph{discharging} operator \C{:}, performing
 the converse operation.
-Such operator decorates
+Such an operator decorates
 proof commands as \C{move}, \C{case} and \C{elim}
  with actions to be performed before the command is actually run.
 
@@ -1182,7 +1186,8 @@ well-founded order relation.
 \index[concept]{termination}
 \index[concept]{consistency}
 
-If non-terminating functions are not ruled out, it is easy to inhabit
+If non-terminating functions were not ruled out, it
+would be easy to inhabit
 the \C{False} type, even if it lacks a proper constructor.
 
 \begin{coq}{}{}
@@ -1201,7 +1206,7 @@ Check oops (Hide oops).  (* : False *)
 \end{coq}
 Note how \C{oops} calls itself, as in the previous example,
 even if it is not a recursive function.
-Such restriction, called
+The restriction that rejects this kind of data type, called the
 \emph{positivity condition}, is out of scope for this book.
 (Roughly speaking, it says that constructors for an inductive data
 type can only depend on maps \emph{to} the data type but not on maps
@@ -1361,7 +1366,7 @@ by an ``\C{a < m'.+4.+4.+4.+4}''. In our example above
 (``\C{set m := _.+1}''), we are using the
 \C{set} command with a wildcard; this captures the first term of the
 form \C{_.+1} appearing in the goal and denotes it by \C{m}, replacing
-it by \C{m} on the goal. In our case, this first term is
+it by \C{m} in the goal. In our case, this first term is
 \C{m'.+4.+4.+4.+4} (which is just syntactic sugar for
 \C{m'.+1.+1.....} with 16 appearances of \C{.+1})\footnote{This is
 slightly counterintuitive, as you
@@ -1435,7 +1440,7 @@ boolean reflection methodology, object of chapter~\ref{ch:boolrefl},
 provides tools to manipulate decidable predicates in a convenient way,
 with the same ease as in a formalism based on a classical logic.
 
-Yet sometimes it is not possible to provide a constructive proof of a
+Yet sometimes it is not practical to provide a constructive proof of a
 statement. In this case, axioms like the excluded middle axiom can
 still be confined into ``boxes''. The purpose of these boxes is to
 delimit a local context in which the required axioms are
