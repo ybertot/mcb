@@ -1064,7 +1064,8 @@ against the pattern \C{p.+1.+1}, then the recursive call would have been
 allowed on arguments \C{p} or \C{p.+1}, but not \C{p.+1.+1}.  The way
 that \Coq{} verifies that recursive functions will terminate is
 explained in more detail in the reference manual \cite{Coq:manual} or in the
-Coq'Art book \cite{BC04}.
+Coq'Art book \cite{BC04}.\marginpar{Discussion Enrico+Yves, 28/03/18: explanations about logical constraints to data-types programming should go in a separate section, where predn and subn will be defined if not already: topics should
+be exhaustiveness and recursive guard checking}.
 
 \index[concept]{recursion!termination}
 \index[concept]{termination}
@@ -1198,6 +1199,8 @@ Eval compute in 2 == addn 1 0.+1.
 
 
 In this section, we introduced a variety of functions and notations
+\marginpar{discussion Enrico+Yves 28/03/18: this paragraph about notations
+for natural numbers should go in the section about notations}
 for operations on natural numbers.  In practice, these functions and
 notations are already provided by the \mcbMC{} library.  In particular
 it provides addition (named \C{addn}, infix notation \C{+}),
