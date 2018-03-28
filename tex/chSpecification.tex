@@ -71,7 +71,7 @@ the fact \C{(asn : a (nth x0 s n))}. In order to establish that
 \C{(has_prop a x0 s)}, we cannot resort to computation. Instead, we can
 prove it by providing the index at which a witness is
 to be found  --- plus a proof of this fact --- which may be better suited
-for instance to an abstract sequence \C{s}.
+for instance for an abstract sequence \C{s}.
 
 In summary, boolean statements are especially convenient for excluded
 middle arguments and its variants (reductio ad
@@ -151,6 +151,8 @@ case: b; case => hlr hrl.
 by right => hP; move: (hrl hP).
 Qed.
 \end{coq}
+\marginpar{some text is needed here to explain where this goal appears
+in the history}
 \begin{coqout}{}{width=5cm,title=Last goal}
 1 subgoal
 P : Prop
@@ -337,7 +339,8 @@ provides a proof of the usual double implication between \C{P} and
 % coerced to \C{Prop} by \C{is\_true}} equivalence:
 
 The trivial reflection view is called \C{idP} and is seldom used
-in conjunction with \C{iffP}.
+in conjunction with \C{iffP}.\marginpar{Why seldom?  It feels strange that
+we choose an example that makes us see a technique that is seldom used}
 
 \begin{coq}{}{}
 Lemma idP {b : bool} : reflect b b.
@@ -406,7 +409,9 @@ subgoal 2 is:
 \end{coqout}
 Note that \C{eqn}, being completely specified by \C{eqnP}, is not
 anymore part of the picture.  Finishing the proof is left as
-exercise~\ref{ex:eqnPinj}.
+exercise~\ref{ex:eqnPinj}.\marginpar{Here, I am quite disturbed by the
+fact that this example relies precisely on the fact that arguments
+of \C{eqnP} have been declared implicit, but this is not explained}
 
 The latter example illustrates the convenience of combining an action
 on a goal, here breaking an equivalence into one subgoal per
@@ -414,7 +419,10 @@ implication, with a change of viewpoint, here by the means of the
 \C{eqnP} view. This combination of atomic proof steps is pervasive in
 a library designed using the boolean reflection methodology: the
 SSReflect tactic language lets one use view lemmas freely
-in the middle of intro-patterns.
+in the middle of intro-patterns.\marginpar{I disagree with the use of
+the colon in this sentence: it gives the impression that
+using views lemmas in the middle of intro-patterns just happened, while
+it is only going to be explained in the next section}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Using views in intro patterns}
@@ -450,7 +458,7 @@ speaking, lemma \C{andP} does not have the shape of an implication,
 which can be fed with a proof of its premise: it is (isomorphic to) the
 conjunction of \emph{two} such implications. The \emph{view mechanism}
 implemented in the tactic language has automatically guessed and
-inserted a term, called \emph{hint view}, which plays the role of an
+inserted a term, called a \emph{hint view}, which plays the role of an
 adapter.
 \index[vernac]{\C{Hint View}}
 
@@ -813,7 +821,7 @@ Here the second argument of \C{reflect} is said to be an \emph{index}
 and it is allowed to vary depending on the constructor: \C{ReflectT} always
 builds a term of type \C{(reflect P true)} while \C{ReflectF} builds
 a term of type \C{(reflect P false)}.  When one reasons
-by cases on a term of type \C{(reflect P b)} he obtains two proof
+by cases on a term of type \C{(reflect P b)}, one obtains two proof
 branches, in the first one \C{b} is replaced by \C{true}, since it
 corresponds to the \C{ReflectT} constructor.  Conversely,
 \C{b} is replaced by \C{false} in the second branch.
@@ -837,8 +845,8 @@ subgoal 2 is:
 false ==> (a == b)
 \end{coqout}
 
-Remark how the automatic substitution trivializes the
-second goal.  The first one can be solved by replacing
+Remark how the automatic substitution makes the
+second goal trivial.  The first one can be solved by replacing
 both \C{a} and \C{b} by their truth values, once \C{ab}
 is destructed.  Hence the full proof script is:
 
@@ -864,11 +872,10 @@ a pattern \C{(_ && _)} and the goal is searched for an instance of
 such pattern by the same matching algorithm the \C{rewrite} tactic
 uses for rewrite rules.
 The tuning of implicit arguments is key to obtaining lemmas easy to
-use, even more so in the case of the ``spec'' ones.
-
+use, especially for ``spec'' lemmas.
 
 If one needs to override the pattern inferred for the index
-of \C{andP}, he can provide one by hand as follows:
+of \C{andP}, one can provide the pattern by hand as follows:
 
 \begin{coq}{}{}
 Lemma example a b : (a || ~ a) && (a && b ==> (a == b)).
@@ -953,8 +960,8 @@ written on paper.
 The first subsection introduces the \C{have} tactic, that is the key
 to structure proofs into intermediate steps.  The second subsection
 deals with the ``problem'' of symmetries.  The third one uses most
-of the techniques and tactics seen so far to prove correct the
-Euclidean division algorithm.  The three subsections contain
+of the techniques and tactics seen so far to prove that the
+Euclidean division algorithm is correct.  The three subsections contain
 material in increasing order of difficulty.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -964,8 +971,8 @@ material in increasing order of difficulty.
 
 Saying that primes are infinite can be phrased as: for any natural number
 $m$, there exists a prime greater than $m$.  The proof of this claim goes like
-that: every natural number greater than 1 has at least one prime divisor.  If
-we take $m! + 1$, then such prime divisor $p$ can be shown to be greater than $m$ as
+that: every natural number greater than 1 has at least one prime divisor.  A
+ prime divisor $p$ of $m! + 1$ can be shown to be greater than $m$ as
 follows.  By contraposition we assume $p \leq m$ and we show that $p$
 does not divide $m!+1$.
 Being smaller than $m$, $p$ divides $m!$, hence to divide $m!+1$, $p$ should divide
@@ -1038,7 +1045,7 @@ Its syntax is similar to the one of the \C{Lemma} command: it takes a name, a
 statement and starts a (sub) proof.  Since the proof is so short, we will
 put it on the same line, and remove the full stop.
 
-The next step is to use the \C{pdivP} lemma to gather a prime divisor of
+The next step is to use the \C{pdivP} lemma to obtain a prime divisor of
 \D{m`!.+1}.  We end up with the following, rather unsatisfactory, script.
 
 \begin{coq}{}{}
@@ -1056,7 +1063,7 @@ We can resort to the flexibility of \C{have} to obtain a more
 pertinent script: the first argument to \C{have}, here a name, can
 actually be any introduction pattern, i.e. what follows
 the \C{=>} operator, for example a view application.
-At the light of that, the script can be
+In the light of that, the script can be
 rearranged as follows.
 
 \begin{coq}{}{}
@@ -1220,7 +1227,7 @@ The last subgoal just requires commuting \C{max} and \C{||}.
 
 We can further improve the script.  For example we could rephrase
 the proof putting in front the justification of the symmetry, and
-then prove one case when we pick $x$ to be smaller than $y$.
+then prove one case where we pick $x$ to be smaller than $y$.
 
 \begin{coq}{}{}
 Lemma leq_max m n1 n2 : (m <= maxn n1 n2) = (m <= n1) || (m <= n2).
@@ -1285,7 +1292,7 @@ single one.  In the end, this proof script consists of three steps:
 the remark that we can
 assume \C{(n2 <= n1)} without losing generality; its justification in
 terms of totality of the order relation and commutativity of \C{max}
-and \C{||}; and the final proof, by transitivity, in the case when
+and \C{||}; and the final proof, by transitivity, in the case where
 the \C{max} is \C{n1} due to the extra assumption.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1374,7 +1381,7 @@ Proof.
 As one expects, \C{edivn} being a recursive program, its specification
 needs to be proved by induction.  Given that the recursive call is on
 the subtraction of the input, we need to perform a strong induction,
-as we did for the postage example in section~\ref{sec:strongind}.
+as we did for the postage stamp example in section~\ref{sec:strongind}.
 
 But let's start by dealing with the trivial case of a null divisor.
 
@@ -1399,8 +1406,8 @@ the hypotheses explicitly selected.
 
 Lines 2 and 3 prepare the induction by unfolding the definition of
 \C{edivn} (to expose the initial value of the accumulators of \C{edivn_rec})
-and makes the invariant of the division loop explicit replacing
-\C{m} by \C{(0 * d.+1 + m)}.  Recall the case \C{d} being \C{0} has
+and makes the invariant of the division loop explicit, by replacing
+\C{m} with \C{(0 * d.+1 + m)}.  Recall the case \C{d} being \C{0} has
 already been handled.
 
 Line 4 performs a strong induction, also generalizing the initial
@@ -1572,6 +1579,7 @@ $~$
 is_true (prime 17)
 \end{coqout}
 
+\marginpar{This sentence makes no sense to me}
 When the statement of the example is processed by \Coq{}
 and it is enforced to be a type, but \lstinline/(prime 17)/ is actually
 a term of type \lstinline/bool/.  Early in the library the
@@ -1688,7 +1696,7 @@ forgeting some fields of a structure to obtain a simpler one, and
 that is easy.  What
 is hard is to reconstruct the missing fields of a structure
 or compare two structures finding the minimum super structure.
-These tasks are mainly implemented with programming type inference.
+These tasks are mainly implemented with programming type inference.\marginpar{as explained where?}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
