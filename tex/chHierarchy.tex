@@ -78,7 +78,8 @@ For \C{eqType} the interface comprises:
   \C{Equality.type})
 \item \C{EqMixin}, \C{PcanEqMixin}, \lstinline/[eqMixin of T by <:]/:
   mixin constructors that bundle the \emph{new} operations and
-  properties the structure provides.
+  properties the structure provides.\marginpar{The notion of {\sl mixin} was
+not sufficiently described before}
 \item \C{EqType}: an instance constructor that creates an instance of
   the structure from a mixin.
 \item \lstinline/[eqType of T]/, \lstinline/[eqType of T for S]/:
@@ -143,6 +144,7 @@ Lemma Zp_add0z : left_id Zp0 Zp_add.
 Lemma Zp_mulC : commutative Zp_mul.
 ...
 \end{coq}
+\marginpar{Too bad this is the only instance of \C{ord0} in the whole book}
 
 Creating an instance of the lowest \lib{ssralg} structure, the
 $\mathbb{Z}$-module (i.e., additive group), requires two lines:
@@ -161,7 +163,8 @@ denotes the zero element, and \C{i + 1} denotes the successor of \C{i} mod $p$.
 The \C{ZmodMixin} constructor infers the operations \C{Zp_add}, etc.,
 from the identities \C{Zp_add0z}, etc.. Providing an explicit definition
 for the mixin, rather than inlining it in line 2, is important as it
-speeds up type checking, which never need to open the mixin bundle.
+speeds up type checking, which never requires opening the mixin bundle.
+\marginpar{Rather : speeds up later type checking, which never ... ??}
 
 The first argument to the instance constructor \C{ZmodType} is
 somewhat redundant, but documents precisely the type for which this
@@ -203,7 +206,7 @@ it possible to multiply in \lstinline/'I_p/ or have polynomials over
 \lstinline/'I_p/. Line 7 adds a \C{comRingType} commutative ring
 structure, which makes it possible to reorder products, or distribute
 evaluation over products of polynomials. Note that no mixin definition
-is needed for line 8 as only a single property is added.
+is needed for line 7 as only a single property is added.
 
 Constraining the shape of the modulus $p$ is a simple and robust way
 to enforce $p>1$: it standardizes the proofs of $p>0$ and $p>1$, which
@@ -222,10 +225,11 @@ Notation "''Z_' p" := 'I_(Zp_trunc p).+2.
 Although it is provably equal to \lstinline/'I_p/ when $p>1$,
 \lstinline/'Z_p/ is the preferred way of referring to that type when
 using its ring structure. Note that the two types are identical when
-\C{p} is a \C{nat} literal such as 3 or 5.
+\C{p} is a \C{nat} literal such as 3 or 5.\marginpar{identical \(\rightarrow\) convertible}
 
 Cloning constructors are mainly used to quickly create instances for
-defined types, such as
+defined types, such as\marginpar{This is a long example, you should not
+start it by an introduction based on an incomplete sentence}
 
 \begin{coq}{name=zp5}{}
 Definition Zmn := ('Z_m * 'Z_n)%type.
@@ -257,7 +261,7 @@ type, and the \lib{fintype} library declares a corresponding \C{finType}
 structure instance. This means that \lstinline/'I_p/ should also have
 an instance of the \C{finRingType} join structure (for \C{p} of the
 right shape). This is not automatic, but thanks to the cloning
-constructor requires only one line in \lib{zmodp}.
+constructor it requires only one line in \lib{zmodp}.
 
 \begin{coq}{name=zp8}{}
 Canonical Zp_finRingType := [finRingType of 'I_p].
@@ -530,7 +534,7 @@ Lemma eq_choose P Q : P =1 Q -> choose P =1 choose Q.
 The mixin actually specifies a specific, depth-based,
 strategy for searching and electing a witness: \C{choose} can be
 defined using \C{find} and the axiom of countable
-choice, which is derivable in \mcbCIC{}% \footnote{behind the
+choice, which is derivable in the \mcbCIC{}% \footnote{behind the
 % \C{\{m|..\}} notation lies the \C{sig} dependent pair.  Such an inductive
 % data type is a copy of the existential quantifier but is
 % declared as a data type rather than a
@@ -639,7 +643,7 @@ exported from \C{GRing}, as these definitions are intended to remain
 private.
 
 \gotcha{If you see an undocumented \lstinline/GRing.something/,
-  then you have broken an abstraction barrier}
+  then you have broken an abstraction barrier}\marginpar{An example would be nice}
 
 The next structure in the hierarchy encapsulates nontrivial rings.
 Imposing the non-triviality condition $1 \neq 0$ is a compromise:
@@ -753,7 +757,7 @@ says that \C{comUnitRingType} is the join of
 also~\cite[section 5]{mahboubi:hal-00816703}).
 
 If a new structure $S$ extends structures that are further apart in
-the hierarchy more than one such additional link may be needed:
+the hierarchy, more than one such additional link may be needed:
 precisely one for each pair of structures whose join is~$S$. For example,
 \C{unitRingAlgebraType} requires three such links, while
 \C{finFieldType} in library \C{finalg} requires 11. It is highly
@@ -775,7 +779,7 @@ for its algebraic predicate hierarchy).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 We have noted already that structure instances are often hard to
-provide explicitly because it is intended they always be inferred.
+provide explicitly because it is intended that they should always be inferred.
 For example the explicit \C{ringType} structure for \lstinline/int * rat/ is
 
 \begin{coq}{name=phant1}{}
@@ -843,7 +847,10 @@ fill in the unsightly expression
 Inference for constructors is more involved, because it has to produce
 bespoke classes and mixins subject to dependent typing constraints.
 While it is in principle possible to program this using dependent
-matching and transport, the complexity of doing so can be daunting.
+matching and transport\marginpar{Do you mean transport in the sense
+of HOTT? Was this notion introduced before?
+I think this paragraph deserves an illustrating example},
+the complexity of doing so can be daunting.
 
 Instead, we propose a simpler, static solution using a combination
 of phantom and function types:
@@ -891,6 +898,7 @@ The code for the instance constructor for \C{choiceType} is almost
 identical, because it only extends \C{eqType} with a mixin that does
 not depend on \C{eqType}.
 Note that this definition allows \Coq{} to infer \C{T} from \C{m}.
+\marginpar{I wondered where does \C{m} come from? thinking it had to be part of the previous paragraph}
 
 \begin{coq}{name=phant23}{}
 Definition pack T m :=
@@ -962,7 +970,7 @@ Inductive windrose := N | S | E | W.
 The most naive way to show that \C{windrose} is a \C{finType} is
 to provide a comparison function, then a choice function, \ldots
 finally an enumeration.  Instead, it is much simpler to show one
-can punt \C{windrose} in bijection with a pre-existing finite type,
+can put \C{windrose} in bijection with a pre-existing finite type,
 like \C{'I_4}.  Let us start by defining the obvious injections.
 
 \begin{coq}{}{}
@@ -976,7 +984,7 @@ the (trivial by computation) proofs that 0, 1, 2, 3
 are smaller than 4.
 
 The type of ordinals is larger; hence we provide only a partial
-function.
+function.\marginpar{Makes no sense to me}
 
 \begin{coq}{}{}
 Definition o2w (o : 'I_4) : option windrose :=
@@ -1012,7 +1020,7 @@ to be tagged as a \C{predArgType} as follows.
 \begin{coq}{}{}
 Inductive windrose : predArgType := N | S | E | W.
 \end{coq}
-After that, our new data type can be used exactly as the ordinal one
+After that, our new data type can be used exactly like the ordinal one
 can.
 
 \begin{coq}{}{}
